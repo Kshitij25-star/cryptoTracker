@@ -22,29 +22,29 @@ const useStyles = makeStyles(() => ({
 }))
 
 export function numberWithCommas(number) {
-  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g,",")
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 }
 const Carousel = () => {
   const [trending, setTrending] = useState([])
 
   const classes = useStyles()
 
-  const { currency,symbol } = CryptoState()
+  const { currency, symbol } = CryptoState()
 
   const fetchTrendingCoins = async () => {
     const { data } = await axios(TrendingCoins(currency))
     setTrending(data)
   }
 
-  console.log(trending)
+  // console.log(trending) // Console 
 
   useEffect(() => {
     fetchTrendingCoins()
   }, [currency])
 
   const items = trending.map((coin) => {
-    
-    let profit = coin.price_change_percentage_24h>=0;
+
+    let profit = coin.price_change_percentage_24h >= 0;
 
     return (
       <Link
@@ -60,17 +60,17 @@ const Carousel = () => {
           }}
         />
         <span style={{
-          color: profit>0 ? "rgba(14,203,129)": "red",
+          color: profit > 0 ? "rgba(14,203,129)" : "red",
           fontWeight: 500
         }}>
           {coin?.symbol}
           &nbsp;
           <span>
-            {profit&&"+"} {coin?.price_change_percentage_24h?.toFixed(2)}%
+            {profit && "+"} {coin?.price_change_percentage_24h?.toFixed(2)}%
           </span>
         </span>
         <span style={{
-          fontSize:22,
+          fontSize: 22,
           fontWeight: 500,
         }}>
           {symbol} {numberWithCommas(coin?.current_price.toFixed(2))}
