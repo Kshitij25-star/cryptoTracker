@@ -4,6 +4,7 @@ import { CoinList } from '../config/api'
 import { CryptoState } from '../CryptoContext'
 import { Container, ThemeProvider, Typography, createTheme, TextField, TableContainer, LinearProgress, Table, TableHead, TableRow, TableCell, TableBody, makeStyles,} from '@material-ui/core'
 import {useNavigate } from 'react-router-dom'
+import { Pagination } from '@material-ui/lab'
 
 const useStyles = makeStyles({
     row: {
@@ -34,6 +35,7 @@ const CoinTable = () => {
 
     const { currency, symbol } = CryptoState()
 
+    const [page,setPage] = useState(1)
     const navigate = useNavigate();
 
     const fetchCoins = async () => {
@@ -111,7 +113,7 @@ const CoinTable = () => {
                                                             fontFamily: 'Montserrat',
                                                         }}
                                                         key={head}
-                                                        align={head=='Coin'?'left':'left'}
+                                                        align='left'
                                                     >
                                                         {head}
                                                     </TableCell>
@@ -119,9 +121,12 @@ const CoinTable = () => {
                                         }
                                     </TableRow>
                                 </TableHead>
-                                <TableBody>
+                                <TableBody style={{
+                                    fontWeight: '700',
+                                }}>
                                         {
                                             handleSearch()
+                                                .slice((page-1)*10,(page-1)*10+10)
                                                 .map((row) => {
                                                     const profit = row.price_change_percentage_24h > 0;
                                                     return (
@@ -159,7 +164,7 @@ const CoinTable = () => {
                                                             style={{
                                                                 color: profit?'green':'red'
                                                             }}>
-                                                                {row?.price_change_percentage_24h.toFixed(2)}
+                                                                {row?.price_change_percentage_24h.toFixed(2)} {'%'}
                                                             </TableCell>
                                                             <TableCell>
                                                                 {symbol} {' '} {numberWithCommas(row?.market_cap)}
@@ -173,6 +178,20 @@ const CoinTable = () => {
                         )
                     } 
                 </TableContainer>
+                <Pagination
+                    style={{
+                        padding: 20,
+                        width: '100%',
+                        display: 'flex',
+                        justifyContent: 'center'
+                    }}
+                    classes={{ul: classes.pagination}}
+                    count={(handleSearch()?.length/10).toFixed(0)}
+                    onChange={(_,value)=> {
+                        setPage(value);
+                        window.scroll(0,450);
+                    }}
+                />
             </Container>
         </ThemeProvider>
     )
